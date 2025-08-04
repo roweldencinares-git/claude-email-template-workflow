@@ -1,0 +1,67 @@
+name: Zoho Integration Workflow
+
+on:
+  issues:
+    types: [opened, closed, assigned]
+  pull_request:
+    types: [opened, closed, merged, review_requested]
+  push:
+    branches: [main, master]
+
+jobs:
+  sync-to-zoho:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Sync GitHub event to Zoho
+        env:
+          ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
+          ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
+          ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/sync-to-zoho.js
+        
+      - name: Update Zoho project status
+        if: github.event_name == 'push'
+        env:
+          ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
+          ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
+          ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
+        run: node scripts/update-project-status.js
+
+  auto-pr-creation:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(github.ref, 'feature/')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'feat: auto-generated PR from feature branch'
+          title: 'Auto PR: ${{ github.ref_name }}'
+          body: |
+            🤖 Auto-generated PR for feature branch: `${{ github.ref_name }}`
+            
+            ## Changes
+            - Feature implementation from branch `${{ github.ref_name }}`
+            
+            ## Zoho Integration
+            - Task automatically created in Zoho Projects
+            - PR review notifications will be sent to Zoho
+            
+            Generated with Claude Code integration
+          branch: ${{ github.ref_name }}
+          base: main

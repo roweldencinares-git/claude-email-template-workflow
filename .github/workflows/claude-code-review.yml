@@ -1,0 +1,40 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Claude Code Review
+        uses: anthropics/claude-code-review-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          review_config: |
+            focus_areas:
+              - security
+              - performance
+              - code_quality
+              - integration_points
+            zoho_integration:
+              log_reviews: true
+              notify_on_issues: true
+
+      - name: Log review to Zoho
+        env:
+          ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
+          ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
+          ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
+        run: |
+          node scripts/log-code-review.js \
+            --pr-number="${{ github.event.pull_request.number }}" \
+            --reviewer="Claude Code" \
+            --status="completed"

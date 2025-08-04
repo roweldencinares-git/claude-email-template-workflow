@@ -1,0 +1,63 @@
+{
+  "zoho": {
+    "api_base_url": "https://www.zohoapis.com",
+    "crm": {
+      "module_mappings": {
+        "github_issues": "Tasks",
+        "pull_requests": "Deals",
+        "commits": "Activities"
+      },
+      "field_mappings": {
+        "issue_title": "Subject",
+        "issue_body": "Description",
+        "assignee": "Owner",
+        "labels": "Tag",
+        "milestone": "Stage"
+      }
+    },
+    "projects": {
+      "project_id": "{{ZOHO_PROJECT_ID}}",
+      "task_mappings": {
+        "github_issue": "task",
+        "pull_request": "milestone",
+        "code_review": "subtask"
+      }
+    }
+  },
+  "github": {
+    "repository": "{{GITHUB_REPO}}",
+    "auto_pr": {
+      "enabled": true,
+      "branch_patterns": ["feature/*", "bugfix/*"],
+      "reviewers": ["@team/reviewers"],
+      "labels": ["auto-generated", "needs-review"]
+    },
+    "issue_templates": {
+      "sync_to_zoho": true,
+      "create_zoho_task": true
+    }
+  },
+  "claude_code": {
+    "review_config": {
+      "auto_review": true,
+      "focus_areas": ["security", "performance", "integration"],
+      "log_to_zoho": true
+    },
+    "assistance": {
+      "implementation_tracking": true,
+      "progress_logging": true
+    }
+  },
+  "webhooks": {
+    "github_to_zoho": {
+      "endpoint": "/webhooks/github",
+      "events": ["issues", "pull_request", "push"],
+      "secret": "{{WEBHOOK_SECRET}}"
+    },
+    "zoho_to_github": {
+      "endpoint": "/webhooks/zoho",
+      "events": ["task_update", "milestone_change"],
+      "auth_token": "{{ZOHO_WEBHOOK_TOKEN}}"
+    }
+  }
+}
