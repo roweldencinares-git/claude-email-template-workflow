@@ -28,16 +28,18 @@ jobs:
           ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
           ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
           ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
+          ZOHO_PROJECT_ID: ${{ secrets.ZOHO_PROJECT_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/sync-to-zoho.js
         
-      - name: Update Zoho project status
+      - name: Deploy Email Templates to Zoho CRM
         if: github.event_name == 'push'
         env:
           ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
           ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
           ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
-        run: node scripts/update-project-status.js
+          ZOHO_PROJECT_ID: ${{ secrets.ZOHO_PROJECT_ID }}
+        run: node scripts/deploy-email-templates.js
 
   auto-pr-creation:
     runs-on: ubuntu-latest
