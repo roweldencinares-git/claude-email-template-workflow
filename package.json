@@ -1,17 +1,28 @@
 {
-  "name": "claude-github-zoho-integration",
+  "name": "claude-email-template-workflow",
   "version": "1.0.0",
-  "description": "Integration project connecting Claude Code, GitHub, and Zoho",
-  "main": "index.js",
+  "description": "Automated workflow for Claude-generated email templates with GitHub and Zoho CRM integration",
+  "main": "webhook-server.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "sync-zoho": "node scripts/sync-to-zoho.js",
+    "start": "node src/webhook-server.js",
     "webhook-server": "node src/webhook-server.js",
+    "sync-zoho": "node scripts/sync-to-zoho.js",
+    "format": "node format-for-zoho.js",
+    "dev": "nodemon src/webhook-server.js",
     "test": "jest",
     "lint": "eslint src/ scripts/",
     "typecheck": "tsc --noEmit"
   },
+  "keywords": [
+    "claude-code",
+    "email-templates",
+    "zoho-crm",
+    "github",
+    "automation",
+    "workflow"
+  ],
+  "author": "Claude Code Integration",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "axios": "^1.6.0",
@@ -27,13 +38,11 @@
     "typescript": "^5.2.2",
     "@types/node": "^20.8.0"
   },
-  "keywords": [
-    "claude-code",
-    "github",
-    "zoho",
-    "integration",
-    "automation"
-  ],
-  "author": "Your Name",
-  "license": "MIT"
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/roweldencinares-git/claude-email-template-workflow.git"
+  }
 }
